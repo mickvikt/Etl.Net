@@ -45,5 +45,17 @@ namespace Paillave.Etl.SqlServer
             if (buildArgs == null) buildArgs = i => i;
             return new SqlServerSaveStreamNode<Correlated<TIn>, IStream<Correlated<TIn>>, TIn>(name, buildArgs(new SqlServerSaveCommandArgsBuilder<Correlated<TIn>, TIn>(i => i.Row)).GetArgs(stream)).Output;
         }
+        public static IStream<TIn> SqlServer2000Save<TIn>(this IStream<TIn> stream, string name, Func<SqlServerSaveCommandArgsBuilder<TIn, TIn>, SqlServerSaveCommandArgsBuilder<TIn, TIn>> buildArgs = null)
+            where TIn : class
+        {
+            if (buildArgs == null) buildArgs = i => i;
+            return new SqlServer2000SaveStreamNode<TIn, IStream<TIn>, TIn>(name, buildArgs(new SqlServerSaveCommandArgsBuilder<TIn, TIn>(i => i)).GetArgs(stream)).Output;
+        }
+        public static IStream<Correlated<TIn>> SqlServer2000Save<TIn>(this IStream<Correlated<TIn>> stream, string name, Func<SqlServerSaveCommandArgsBuilder<Correlated<TIn>, TIn>, SqlServerSaveCommandArgsBuilder<Correlated<TIn>, TIn>> buildArgs = null)
+            where TIn : class
+        {
+            if (buildArgs == null) buildArgs = i => i;
+            return new SqlServer2000SaveStreamNode<Correlated<TIn>, IStream<Correlated<TIn>>, TIn>(name, buildArgs(new SqlServerSaveCommandArgsBuilder<Correlated<TIn>, TIn>(i => i.Row)).GetArgs(stream)).Output;
+        }        
     }
 }
