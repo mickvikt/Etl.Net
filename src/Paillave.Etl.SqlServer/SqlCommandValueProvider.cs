@@ -74,12 +74,15 @@ public class SqlCommandValueProvider<TIn, TOut> : ValuesProviderBase<TIn, TOut>
 
     public override void PushValues(TIn input, Action<TOut> push, CancellationToken cancellationToken, IExecutionContext context)
     {
+        const int commandTimeoutInSeconds = 30 * 60; 
+        
         // https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-code-examples
         // https://stackoverflow.com/questions/5980615/parameterized-query-in-oracle-trouble
         var sqlConnection = _args.ConnectionName == null ? context.DependencyResolver.Resolve<IDbConnection>() : context.DependencyResolver.Resolve<IDbConnection>(_args.ConnectionName);
         var command = sqlConnection.CreateCommand();
         command.CommandText = _args.SqlQuery;
         command.CommandType = CommandType.Text;
+        command.CommandTimeout = commandTimeoutInSeconds;
         // var command = new SqlCommand(_args.SqlQuery, sqlConnection);
         Regex getParamRegex = new Regex(@"@(?<param>\w*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         var allMatches = getParamRegex.Matches(_args.SqlQuery).ToList().Select(match => match.Groups["param"].Value).Distinct().ToList();
